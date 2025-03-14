@@ -1,22 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
+
 <head>
   <meta charset="UTF-8">
-  <title>Document</title>
+  <title>Porco Rosso</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css">
+  <style>
+    :root {
+      --base-font-size: 14px;
+      --theme-color: rgb(3, 118, 133);
+      --heading-h1-font-weight:700;
+      --heading-h2-font-weight:700;
+      --heading-h2-font-size:1.8rem;
+    }
+  </style>
+  <style>
+    img {
+      width: 100%;             /* 图片宽度填满容器 */
+      height: 100%;            /* 图片高度填满容器 */
+      object-fit: cover;       /* 保持图片比例并填充整个元素 */
+    }
+  </style>
 </head>
+
 <body>
   <div id="app"></div>
   <script>
     window.$docsify = {
-      name: '',
-      repo: ''
+      name: 'Porco Rosso',
+      repo: '',
+      coverpage: true,
+      loadSidebar: true,
     }
   </script>
   <!-- Docsify v4 -->
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <!-- Theme -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/js/docsify-themeable.min.js"></script>
+  <!-- Plugins -->
+  <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-csharp.min.js"></script>
+
 </body>
+
 </html>
