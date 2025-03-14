@@ -1,9 +1,4 @@
-<div style="margin:0 auto;width:150px;height:150px;border-radius:50%;overflow:hidden;">
-  <style>
-    p {
-      margin: 0;
-    }
-  </style>
+<div class="imgcontainer" style="margin:0 auto;width:200px;height:200px;border-radius:50%;"
 
 ![logo][1741937941029]
 

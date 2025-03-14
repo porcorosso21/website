@@ -1,4 +1,4 @@
-# Markdown 語法
+# Markdown語法
 
 Markdown 是一種輕量級的標記語言，讓使用者透過簡單的純文字格式，就能輕鬆地為文字加上樣式。它使用易讀易寫的語法，例如用「#」表示標題、用「*」表示強調，讓使用者能專注於內容創作，而非複雜的排版。Markdown 廣泛應用於撰寫文件、筆記、部落格文章等，並能輕易轉換成 HTML 等格式，方便在網頁上呈現。
 
@@ -6,19 +6,27 @@ Markdown 是一種輕量級的標記語言，讓使用者透過簡單的純文�
 
 使用`#`來設定標題，一共6個階層
 
-> \# 標題  
-> \## 標題  
-> \### 標題  
-> \#### 標題  
-> \##### 標題  
-> \###### 標題  
+<!-- tabs:start -->
 
-> # 標題  
-> ## 標題  
-> ### 標題  
-> #### 標題  
-> ##### 標題  
-> ###### 標題  
+#### **展示**
+
+# 標題  
+## 標題  
+### 標題  
+#### 標題  
+##### 標題  
+###### 標題 
+
+#### **Markdown**
+
+\# 標題  
+\## 標題  
+\### 標題  
+\#### 標題  
+\##### 標題  
+\###### 標題  
+
+<!-- tabs:end -->
 
 ## 列表
 
@@ -26,77 +34,117 @@ Markdown 是一種輕量級的標記語言，讓使用者透過簡單的純文�
 使用`*`或`+`或`-`+`.`+`一個空白`建立無序列表；若要下一個階層則在前方加兩個空白  
 在該階層列表要換行，則於列表後方加`兩個空白`
 
-> \* LIST A  
-> \* LIST B  
-> &nbsp;&nbsp;&nbsp;&nbsp;2\. LIST B1  
-> &nbsp;&nbsp;&nbsp;&nbsp;9\. LIST B2  
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\* LIST B2-1  
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\* LIST B2-2  
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;內文B2  
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\* LIST B2-3  
-> &nbsp;&nbsp;&nbsp;&nbsp;7\. LIST B3  
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;內文B3
+<!-- tabs:start -->
 
-> * LIST A  
-> * LIST B
->    2. LIST B1
->    9. LIST B2
->       * LIST B2-1
->       * LIST B2-2  
->         內文B2
->       * LIST B2-3
->    7. LIST B3  
->      內文B3
+#### **展示**
+
+* LIST A  
+* LIST B
+   2. LIST B1
+   9. LIST B2
+      * LIST B2-1
+      * LIST B2-2  
+        內文B2
+      * LIST B2-3
+   7. LIST B3  
+     內文B3
+
+#### **Markdown**
+
+\* LIST A  
+\* LIST B  
+&nbsp;&nbsp;&nbsp;&nbsp;2\. LIST B1  
+&nbsp;&nbsp;&nbsp;&nbsp;9\. LIST B2  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\* LIST B2-1  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\* LIST B2-2  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;內文B2  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\* LIST B2-3  
+&nbsp;&nbsp;&nbsp;&nbsp;7\. LIST B3  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;內文B3
+
+<!-- tabs:end -->
 
 ## *段落*
 
 使用`>`來建立區塊，並可建立多階層
 
+<!-- tabs:start -->
+
+#### **展示**
+
 >
-> >
->
+
+#### **Markdown**
+
+\>
+
+<!-- tabs:end -->
 
 使用`---`來建立區塊
 
-> ---
+<!-- tabs:start -->
+
+#### **展示**
+
+---
+
+#### **Markdown**
+
+\---
+
+<!-- tabs:end -->
 
 使用`兩個空格`或是`</br>`來做換行
 
-> LINE 1  
-> LINE 2</br>
+<!-- tabs:start -->
+
+#### **展示**
+
+LINE 1  
+LINE 2</br>
+
+#### **Markdown**
+
+LINE 1  
+LINE 2\</br>
+
+<!-- tabs:end -->
+
+
 
 ## 字體效果
 
-> \*斜體字*  
-> \*\*粗體字**  
-> \****斜體兼粗體***  
-> \~~刪除線~~  
-> \`文字凸顯`  
-> <網址超連結>  
-> \[文字超連結](https://www.google.com)
+<!-- tabs:start -->
 
-> *斜體字*  
-> **粗體字**  
-> ***斜體兼粗體***  
-> ~~刪除線~~  
-> `文字凸顯`  
-> <https://www.google.com>  
-> [文字超連結](https://www.google.com)
+#### **展示**
+
+*斜體字*  
+**粗體字**  
+***斜體兼粗體***  
+~~刪除線~~  
+`文字凸顯`  
+<https://www.google.com>  
+[文字超連結](https://www.google.com)
+
+#### **Markdown**
+
+\*斜體字*  
+\*\*粗體字**  
+\****斜體兼粗體***  
+\~~刪除線~~  
+\`文字凸顯`  
+<網址超連結>  
+\[文字超連結](https://www.google.com)
+
+<!-- tabs:end -->
 
 ## 程式碼
 
 使用` ```語法 `及` ``` `包起來；支援的語法清單會依照上傳平台或是HTML網頁產生的工具不同而有不同的支援度，所以要看平台或工具的文件說明。
 
-> \```csharp  
-> public class MyClass  
-> {  
-> &nbsp;&nbsp;&nbsp;&nbsp;public string String1 { get; set; }  
-> &nbsp;&nbsp;&nbsp;&nbsp;public MyClass()  
-> &nbsp;&nbsp;&nbsp;&nbsp;{  
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Console.WriteLine("建構子");  
-> &nbsp;&nbsp;&nbsp;&nbsp;}  
-> }  
-> \```
+<!-- tabs:start -->
+
+#### **展示**
 
 ```csharp
 public class MyClass
@@ -109,14 +157,47 @@ public class MyClass
 }
 ```
 
+```html
+<p>This is a paragraph</p>
+<a href="//docsify.js.org/">Docsify</a>
+```
+
+#### **Markdown**
+
+\```csharp  
+public class MyClass  
+{  
+&nbsp;&nbsp;&nbsp;&nbsp;public string String1 { get; set; }  
+&nbsp;&nbsp;&nbsp;&nbsp;public MyClass()  
+&nbsp;&nbsp;&nbsp;&nbsp;{  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Console.WriteLine("建構子");  
+&nbsp;&nbsp;&nbsp;&nbsp;}  
+}  
+\```
+
+\```html  
+\<p>This is a paragraph\</p>  
+\<a href="//docsify.js.org/">Docsify\</a>  
+\```  
+
+<!-- tabs:end -->
+
 ## 圖片
 
-> \!\[alt屬性](圖片連結)  
-> \!\[](圖片連結)  
+<!-- tabs:start -->
 
-除了使用 ***圖片連結*** 外，還可以放入base64的字串來顯示圖片；VS Code有個好用的套件叫`ClipImage64`，它可以將複製的圖片直接貼上Markdown檔，達到插入的圖片直接與Markdown檔綁在一起的效果。
+#### **展示**
 
 ![alt屬性][1741933018997]
+
+#### **Markdown**
+
+\!\[alt屬性](圖片連結)  
+\!\[](圖片連結)  
+
+<!-- tabs:end -->
+
+除了使用 ***圖片連結*** 外，還可以放入base64的字串來顯示圖片；VS Code有個叫`ClipImage64`的套件，它可以將複製的圖片直接貼上Markdown檔，達到插入的圖片直接與Markdown檔綁在一起的效果。
 
 ## 補充說明
 
