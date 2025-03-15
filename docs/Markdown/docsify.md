@@ -5,13 +5,13 @@ docsify 是一個輕量級的 JavaScript 工具，能快速將 Markdown 文件�
 詳細設定文件請見 <https://docsify.js.org>
 
 
-### 安裝docsify-cli工具
+## 安裝docsify-cli工具
 
 ```bash
 npm i docsify-cli -g
 ```
 
-### 初始化
+## 初始化
 
 將根目錄建置在`doc`資料夾中
 
@@ -20,7 +20,7 @@ npm i docsify-cli -g
 docsify init ./docs
 ```
 
-### 開始建立文檔
+## 開始建立文檔
 
 初始化成功後，可在`./docs`目錄看到幾個預設的文件
 
@@ -30,7 +30,7 @@ docsify init ./docs
 
 可以直接編輯`README.md`開始建立首頁內容
 
-### 預覽
+## 預覽
 
 1. 使用docsify本地伺服器預覽  
   通過執行`docsify serve`啟動一個本地伺服器。預設網址為http://localhost:3000。
