@@ -16,6 +16,8 @@
       --heading-h1-font-weight:700;
       --heading-h2-font-weight:700;
       --heading-h2-font-size:1.8rem;
+
+      --sidebar-width : 25rem;
     }
   </style>
   <style>
@@ -48,7 +50,12 @@
         theme: 'classic',
         tabComments: true,
         tabHeadings: true
-      }
+      },
+      copyCode: {
+        buttonText: 'Copy to clipboard',
+        errorText: 'Error',
+        successText: 'Copied',
+      },
     }
   </script>
   <!-- Docsify v4 -->
@@ -58,6 +65,7 @@
   <!-- Plugins -->
   <!-- <script src="https://cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script> -->
   <script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-csharp.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-batch.min.js"></script>
 </body>
