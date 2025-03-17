@@ -1,6 +1,8 @@
 * [首頁](/)
 * [C#]()
   * [JSON序列化與序列化](/CSharp/json.md)
+  * [RSA加解密](/CSharp/rsa.md)
+  * [AES加解密](/CSharp/aes.md)
   * [MySQL資料庫連線](/CSharp/mysql.md)
 * [Markdown]()
   * [Markdown](/Markdown/markdown.md)
