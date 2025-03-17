@@ -1,4 +1,4 @@
-# BarCode及QRCode產生
+# 產生BarCode及QRCode
 
 ## BarCode
 
