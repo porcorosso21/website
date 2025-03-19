@@ -4,6 +4,7 @@
   * [RSA加解密](/CSharp/rsa.md)
   * [AES加解密](/CSharp/aes.md)
   * [MySQL資料庫連線](/CSharp/mysql.md)
+  * [SQLite資料庫連線](/CSharp/sqlite.md)
   * [RDLC直接列印](/CSharp/PrintRDLC.md)
   * [BarCode / QRCode](/CSharp/barcodeqrcode.md)
 * [Markdown]()
