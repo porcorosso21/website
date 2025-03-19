@@ -1,6 +1,6 @@
 # 資料庫連線
 
-## MySql/MariaDB
+## MySql / MariaDB
 
 ```csharp
 using System;
@@ -19,25 +19,30 @@ namespace ConsoleApp1
             int i = new Random().Next(25) + 65;
             String EmpName = "Mr." + ((char)i).ToString();
 
-            //INSERT
             MySQL sql = new MySQL();
-            sql.CommandClear();
+
+            //CREATE TABLE
             sql.BeginTransaction();
-            sql.CommandAdd("INSERT INTO employee (EmpName, EmpBirthday) VALUES (@EmpName, @EmpBirthday);");
+            sql.CommandClear();
+            sql.CommandAdd("CREATE TABLE IF NOT EXISTS Employee (id INT PRIMARY KEY AUTO_INCREMENT,EmpName VARCHAR(100));");
+            sql.NonQuery();
+
+            //INSERT
+            sql.CommandClear();
+            sql.CommandAdd("INSERT INTO Employee ( EmpName");
+            sql.CommandAdd("        ) VALUES (");
+            sql.CommandAdd("                  @EmpName);");
             sql.ParamAdd("EmpName", EmpName, MySQL.ParamType.String);
-            sql.ParamAdd("EmpBirthday", DateTime.Now.AddDays(Convert.ToInt32(new Random().Next(9))).ToString("yyyy-MM-dd"), MySQL.ParamType.DateTime); //亂數產生日期
             sql.NonQuery();
             sql.Commit();
 
-            Console.WriteLine("Last Inserted Id: " + sql.LastInsertedId);
-
             //SELECT
             sql.CommandClear();
-            sql.CommandAdd(" SELECT *  FROM employee");
+            sql.CommandAdd(" SELECT *  FROM {0}", "Employee");
             DataTable dt = sql.Query();
-
             Console.WriteLine("First Employee EmpName : " + dt.Rows[0]["EmpName"].ToString());
             Console.WriteLine("Last Employee EmpName : " + dt.Rows[dt.Rows.Count - 1]["EmpName"].ToString());
+            Console.WriteLine("Employee Count : " + dt.Rows.Count.ToString());
         }
 
         /// <summary>
@@ -167,10 +172,7 @@ namespace ConsoleApp1
             {
                 try
                 {
-                    if (con.State != ConnectionState.Open)
-                    {
-                        con.Open();
-                    }
+                    con.Open();
                     MySqlCommand cmd = new MySqlCommand(commands.ToString(), con);
                     cmd.CommandTimeout = this.cmdTimeoutSecond;
                     cmd.CommandType = CommandType.Text;
@@ -210,10 +212,7 @@ namespace ConsoleApp1
             {
                 try
                 {
-                    if (con.State != ConnectionState.Open)
-                    {
-                        con.Open();
-                    }
+                    con.Open();
                     this.trans = con.BeginTransaction();
                 }
                 catch (Exception ex)
@@ -234,7 +233,7 @@ namespace ConsoleApp1
                 try
                 {
                     trans.Commit();
-                    con.Clone();
+                    con.Close();
                 }
                 catch (Exception ex)
                 {
@@ -254,7 +253,7 @@ namespace ConsoleApp1
                 try
                 {
                     trans.Rollback();
-                    con.Clone();
+                    con.Close();
                 }
                 catch (Exception ex)
                 {
@@ -380,7 +379,7 @@ namespace ConsoleApp1
 
         /// <summary>
         /// SQLite
-        /// 使用NuGet安裝System.Data.SQLite會在專案中產生System.Data.SQLite.dll
+        /// 使用NuGet安裝System.Data.SQLite會自動在專案中產生System.Data.SQLite.dll
         /// 並建立x86、x64y資料夾，將SQLite.Interop.dll放入
         /// SQLite需要區分x86、x64，否則會出現錯誤
         /// 版本1.0.111.0是最後支援資料庫加密的版本，若需資料庫加密，請使用此版本
@@ -476,6 +475,8 @@ namespace ConsoleApp1
             {
                 try
                 {
+                    con.Open();
+
                     SQLiteCommand cmd = new SQLiteCommand(commands.ToString(), con);
                     cmd.CommandTimeout = this.commandtimeout;
                     cmd.CommandType = CommandType.Text;
@@ -509,10 +510,7 @@ namespace ConsoleApp1
             {
                 try
                 {
-                    if (con.State != ConnectionState.Open)
-                    {
-                        con.Open();
-                    }
+                    con.Open();
                     this.trans = con.BeginTransaction();
                 }
                 catch (Exception ex)
@@ -533,7 +531,7 @@ namespace ConsoleApp1
                 try
                 {
                     trans.Commit();
-                    con.Clone();
+                    con.Close();
                 }
                 catch (Exception ex)
                 {
@@ -553,7 +551,7 @@ namespace ConsoleApp1
                 try
                 {
                     trans.Rollback();
-                    con.Clone();
+                    con.Close();
                 }
                 catch (Exception ex)
                 {
@@ -612,4 +610,309 @@ namespace ConsoleApp1
             }
         }
     }
+}
+```
+
+## SQL Server
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Text;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //A~Z亂數產生
+            int i = new Random().Next(25) + 65;
+            String EmpName = "Mr." + ((char)i).ToString();
+
+            MsSql sql = new MsSql();
+
+            //CREATE TABLE
+            sql.BeginTransaction();
+            sql.CommandClear();
+            sql.CommandAdd("CREATE TABLE Employee (id INT PRIMARY KEY IDENTITY(1,1), EmpName NVARCHAR(100))");
+            sql.NonQuery();
+
+            //INSERT
+            sql.CommandClear();
+            sql.CommandAdd("INSERT INTO Employee ( EmpName");
+            sql.CommandAdd("        ) VALUES (");
+            sql.CommandAdd("                  @EmpName);");
+            sql.ParamAdd("EmpName", EmpName, SqlDbType.NVarChar);
+            sql.NonQuery();
+            sql.Commit();
+
+            //SELECT
+            sql.CommandClear();
+            sql.CommandAdd(" SELECT *  FROM {0}", "Employee");
+            DataTable dt = sql.Query();
+            Console.WriteLine("First Employee EmpName : " + dt.Rows[0]["EmpName"].ToString());
+            Console.WriteLine("Last Employee EmpName : " + dt.Rows[dt.Rows.Count - 1]["EmpName"].ToString());
+            Console.WriteLine("Employee Count : " + dt.Rows.Count.ToString());
+        }
+
+        /// <summary>
+        /// MsSql
+        /// </summary>
+        public class MsSql
+        {
+            /// <summary>
+            /// Last Inserted Id
+            /// </summary>
+            public object LastInsertedId
+            {
+                get { return lastInsertedId; }
+            }
+            private object lastInsertedId;
+
+            /// <summary>Server</summary>
+            private String datasource { get { return "localhost"; } }
+
+            /// <summary>DataBase</summary>
+            private String database { get { return "test"; } }
+
+            /// <summary>SqlConnection</summary>
+            private SqlConnection con;
+
+            /// <summary>SqlTransaction</summary>
+            private SqlTransaction trans;
+
+            /// <summary>CommandTimeout</summary>
+            private int cmdTimeoutSecond { get { return 60; } }
+
+            /// <summary>MySQL Commands</summary>
+            private StringBuilder commands = new StringBuilder();
+
+            /// <summary>Parameters Class</summary>
+            private class Param
+            {
+                public String Name;
+                public object Obj;
+                public SqlDbType SqlDbType;
+            }
+
+            /// <summary>Parameters清單</summary>
+            private List<Param> paramlist = new List<Param>();
+
+            /// <summary>
+            /// 建構
+            /// </summary>
+            public MsSql()
+            {
+                //以windows身分連線
+                String connectionString = string.Format(@"Data Source={0};Initial Catalog={1};Integrated Security=True", this.datasource, this.database);
+                con = new SqlConnection(connectionString);
+            }
+
+            /// <summary>
+            /// 清除指令與變數
+            /// </summary>
+            public void CommandClear()
+            {
+                commands.Clear();
+                paramlist.Clear();
+            }
+
+            /// <summary>
+            /// 添加指令，參數前需加@
+            /// </summary>
+            /// <param name="command"></param>
+            public void CommandAdd(String command)
+            {
+                commands.AppendLine(command);
+            }
+
+            /// <summary>
+            ///  添加指令，參數前需加@
+            /// </summary>
+            /// <param name="format"></param>
+            /// <param name="args"></param>
+            public void CommandAdd(String format, params String[] args)
+            {
+                commands.AppendLine(String.Format(format, args));
+            }
+
+            /// <summary>
+            /// 添加參數
+            /// </summary>
+            /// <param name="name">參數名稱，前面不用加@</param>
+            /// <param name="obj">參數值</param>
+            /// <param name="sqldbtype">資料型態</param>
+            public void ParamAdd(String name, Object obj, SqlDbType sqldbtype)
+            {
+                Param p = new Param();
+                p.Name = "@" + name;
+                p.Obj = obj;
+                p.SqlDbType = sqldbtype;
+
+                paramlist.Add(p);
+            }
+
+            /// <summary>
+            /// SELECT 
+            /// </summary>
+            /// <returns></returns>
+            /// <exception cref="Exception"></exception>
+            public DataTable Query()
+            {
+                try
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand(commands.ToString(), con);
+                    cmd.CommandTimeout = this.cmdTimeoutSecond;
+                    cmd.CommandType = CommandType.Text;
+
+                    setParams(ref cmd);
+
+                    //取得資料
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    DataTable dt = new DataTable();
+                    dt.Load(dr);
+                    dt.TableName = "DataTable";
+
+                    foreach (DataColumn dc in dt.Columns)
+                    {
+                        dc.ReadOnly = false;
+                        dc.AllowDBNull = true;
+                        dc.MaxLength = -1;
+                    }
+
+                    dr.Dispose();
+                    cmd.Dispose();
+                    con.Close();
+
+                    return dt;
+                }
+                catch (Exception ex)
+                {
+                    con.Close();
+
+                    StringBuilder exceptionMessage = new StringBuilder();
+                    exceptionMessage.AppendLine("[MySQL]");
+                    exceptionMessage.AppendLine(commands.ToString());
+                    exceptionMessage.AppendLine(String.Empty);
+                    exceptionMessage.AppendLine("---------------");
+                    exceptionMessage.AppendLine(String.Empty);
+                    exceptionMessage.AppendLine(ex.Message);
+                    throw new Exception(exceptionMessage.ToString(), ex);
+                }
+            }
+
+            /// <summary>
+            /// BeginTransaction
+            /// </summary>
+            /// <exception cref="Exception"></exception>
+            public void BeginTransaction()
+            {
+                try
+                {
+                    con.Open();
+                    this.trans = con.BeginTransaction();
+                }
+                catch (Exception ex)
+                {
+                    StringBuilder exceptionMessage = new StringBuilder();
+                    exceptionMessage.AppendLine("[MsSql BeginTransaction]");
+                    exceptionMessage.AppendLine(ex.Message);
+                    throw new Exception(exceptionMessage.ToString(), ex);
+                }
+            }
+
+            /// <summary>
+            /// Commit
+            /// </summary>
+            /// <exception cref="Exception"></exception>
+            public void Commit()
+            {
+                try
+                {
+                    trans.Commit();
+                    con.Close();
+                }
+                catch (Exception ex)
+                {
+                    StringBuilder exceptionMessage = new StringBuilder();
+                    exceptionMessage.AppendLine("[MySQL Commit]");
+                    exceptionMessage.AppendLine(ex.Message);
+                    throw new Exception(exceptionMessage.ToString(), ex);
+                }
+            }
+
+            /// <summary>
+            /// Rollback
+            /// </summary>
+            /// <exception cref="Exception"></exception>
+            public void Rollback()
+            {
+                try
+                {
+                    trans.Rollback();
+                    con.Close();
+                }
+                catch (Exception ex)
+                {
+                    StringBuilder exceptionMessage = new StringBuilder();
+                    exceptionMessage.AppendLine("[MySQL Rollback]");
+                    exceptionMessage.AppendLine(ex.Message);
+                    throw new Exception(exceptionMessage.ToString(), ex);
+                }
+            }
+
+            /// <summary>
+            /// UPDATE INSERT DELETE
+            /// </summary>
+            /// <exception cref="Exception"></exception>
+            public void NonQuery()
+            {
+                try
+                {
+                    SqlCommand cmd = new SqlCommand(commands.ToString().TrimEnd(';') + ";SELECT SCOPE_IDENTITY();", con);
+                    cmd.CommandTimeout = cmdTimeoutSecond;
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Transaction = this.trans;
+
+                    setParams(ref cmd);
+
+                    this.lastInsertedId = cmd.ExecuteScalar();
+                    cmd.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    Rollback();
+
+                    StringBuilder exceptionMessage = new StringBuilder();
+                    exceptionMessage.AppendLine("[MsSql]");
+                    exceptionMessage.AppendLine(commands.ToString());
+                    exceptionMessage.AppendLine(String.Empty);
+                    exceptionMessage.AppendLine("---------------");
+                    exceptionMessage.AppendLine(String.Empty);
+                    exceptionMessage.AppendLine(ex.Message);
+                    throw new Exception(exceptionMessage.ToString(), ex);
+                }
+            }
+
+            /// <summary>
+            /// 添加參數
+            /// </summary>
+            /// <param name="cmd"></param>
+            private void setParams(ref SqlCommand cmd)
+            {
+                cmd.Parameters.Clear();
+
+                foreach (Param p in paramlist)
+                {
+                    cmd.Parameters.Add(p.Name, p.SqlDbType).Value = p.Obj;
+                }
+            }
+        }
+    }
+}
+
 ```
