@@ -12,12 +12,18 @@
   <style>
     :root {
       --base-font-size: 16px;
-      --theme-color: rgb(3, 118, 133);
+      --theme-color: #037685;
       --heading-h1-font-weight:700;
       --heading-h2-font-weight:700;
       --heading-h2-font-size:1.8rem;
 
       --sidebar-width : 25rem;
+      --sidebar-name-font-size : 3rem;
+      --sidebar-name-color : #037685;
+      --sidebar-name-font-weight : 400;
+
+      --sidebar-nav-link-font-weight : 600;
+      --sidebar-nav-link-font-weight--active : 700;
     }
   </style>
   <style>
@@ -39,9 +45,13 @@
       // homepage: "home.md",
       coverpage: true,
       loadSidebar: true,
+      alias: {
+        '/.*/_sidebar.md': '/_sidebar.md',
+      },
       autoHeader: true,
       auto2top: true,
-      subMaxLevel:3,
+      subMaxLevel:4,
+      sidebarDisplayLevel: 1,
       themeable: {
         readyTransition : true,
         responsiveTables: true
@@ -59,6 +69,10 @@
         successText: '已複製',
       },
     }
+
+    
+
+
   </script>
   <!-- Docsify v4 -->
   <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
