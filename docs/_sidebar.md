@@ -5,6 +5,8 @@
   * [資料庫連線](/CSharp/database.md)
   * [RDLC直接列印](/CSharp/PrintRDLC.md)
   * [BarCode / QRCode](/CSharp/barcodeqrcode.md)
+* [API]()
+  * [.NET Core 8 RESTful API](/API/dotNetCore8RESTfulAPI.md)
 * [Markdown]()
   * [Markdown](/Markdown/markdown.md)
   * [docsify](/Markdown/docsify.md)
