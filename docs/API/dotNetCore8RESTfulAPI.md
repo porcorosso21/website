@@ -209,7 +209,7 @@ if (app.Environment.IsDevelopment())
 }
 ```
 
-.NET Core Web API 專案範本本身有提供Swagger建立AP文件，執行偵錯後便會值開啟Swagger網頁，可以檢視API清單，也可以直接測試
+.NET Core Web API 專案範本本身有提供Swagger建立AP文件，執行偵錯後便會自動開啟Swagger網頁，可以檢視API清單，也可以直接測試
 
 ![Alternative Text][1742537452439]
 
