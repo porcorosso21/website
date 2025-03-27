@@ -8,7 +8,7 @@
   * [BarCode / QRCode](/CSharp/barcodeqrcode.md)
   * [Dll參考](/CSharp/dllinresources)
   * [模擬執行身分](/CSharp/UserImpersonation.md)
-* [WCF](/WCf/WCF.md)
+* [WCF](/WCF/WCF.md)
 * [API](#)
   * [.NET Core 8 RESTful API](/API/dotNetCore8RESTfulAPI.md)
 * [Markdown](#)
