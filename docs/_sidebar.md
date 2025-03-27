@@ -1,6 +1,7 @@
 * [C#](#)
   * [JSON序列化與序列化](CSharp/json.md)
   * [UserControl事件的建立與外部綁定](/CSharp/UserControlEventHandler.md)
+  * [Task非同步執行](/CSharp/task.md)
   * [加解密](/CSharp/cryptography.md)
   * [資料庫連線](/CSharp/database.md)
   * [RDLC直接列印](/CSharp/PrintRDLC.md)
