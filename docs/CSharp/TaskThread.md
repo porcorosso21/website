@@ -1,6 +1,6 @@
-# Task
+# Task、Thread
 
-## 簡單的Task範例
+## Task
 
 ```csharp
 private async void buttonGo_Click(object sender, EventArgs e)
@@ -36,7 +36,7 @@ private async void buttonGo_Click(object sender, EventArgs e)
 }
 ```
 
-## 同時執行兩個執行續
+## 同時執行兩個Task
 
 ```csharp
 private async void buttonGo_Click(object sender, EventArgs e)
@@ -107,7 +107,7 @@ private async void buttonGo_Click(object sender, EventArgs e)
 }
 ```
 
-## 利用CancellationTokenSource達到執行續取消
+## 利用CancellationTokenSource取消Task
 
 ```csharp
 /// <summary>Task</summary>
@@ -175,6 +175,85 @@ private async void buttonGo_Click(object sender, EventArgs e)
         });
 
         Console.WriteLine("非同步執行結束");
+    }
+}
+```
+
+## Thread
+
+```csharp
+/// <summary>Thread</summary>
+Thread t;
+
+private void buttonGO_Click(object sender, EventArgs e)
+{
+    if (t != null && t.ThreadState != ThreadState.Aborted && t.ThreadState != ThreadState.Stopped) //啟動中，中止
+    {
+        //中止程序
+        t.Abort();
+
+        //處理完畢後的程序
+        ProcessDone();
+    }
+    else //未啟用，啟動程序
+    {
+        //進度條初始化
+        progressBar1.Maximum = 10;
+        progressBar1.Value = 0;
+        progressBar1.Step = 1;
+
+        //啟動程序
+        Console.WriteLine("程序開始");
+        t = new Thread(() => { Process(); });
+        t.Start();
+    }
+}
+
+/// <summary>
+/// 
+/// </summary>
+private void Process()
+{
+    while (true)
+    {
+        //模擬處理時間
+        Thread.Sleep(1000);
+
+        //異動進度條
+        this.Invoke(new Action(() => //跨執行緒操作UI
+        {
+            progressBar1.PerformStep();
+        }));
+
+        if (progressBar1.Value == progressBar1.Maximum) { break; }
+    }
+
+    //處理完畢後的程序
+    ProcessDone();
+}
+
+/// <summary>
+/// 處理完畢後的程序
+/// </summary>
+private void ProcessDone()
+{
+    if (this.InvokeRequired)
+    {
+        this.Invoke(new Action(() => //跨執行緒操作UI
+        {
+            ProcessDone();
+        }));
+    }
+    else
+    {
+        if (t.ThreadState == ThreadState.Aborted) //中止
+        {
+            Console.WriteLine("程序中止");
+        }
+        else //完成   
+        {
+            Console.WriteLine("程序完成");
+        }
     }
 }
 ```
