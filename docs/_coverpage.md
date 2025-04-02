@@ -4,7 +4,7 @@
 
 </div>
 
-# Porco Rosso <small>0.3</small>
+# Porco Rosso <small>0.5</small>
 
 [GitHub](https://github.com/porcorosso21)
 [Get Started](#main)
