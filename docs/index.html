@@ -68,6 +68,9 @@
         errorText: 'Error',
         successText: '已複製',
       },
+      mermaidConfig: {
+        querySelector: ".mermaid"
+      }
     }
 
     
@@ -85,6 +88,17 @@
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-csharp.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-batch.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-json.min.js"></script>
+  
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: 'loose',
+      logLevel: 1
+    });
+    window.mermaid = mermaid;
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-mermaid@2.0.1/dist/docsify-mermaid.js"></script>
 </body>
 
 </html>
