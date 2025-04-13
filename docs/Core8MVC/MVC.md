@@ -1,106 +1,191 @@
-# 簡單的 ASP.NET Core MVC 專案
+# ASP.NET Core 8.0 MVC 基礎
+
+.NET Core 8.0 MVC 指的是使用 .NET 8.0 這個開發平台，並採用 MVC(Model-View-Controller) 架構模式來建構 Web應用程式 的一種方法。
+
+* **.NET 8.0**:
+
+    這是微軟開發的一個現代化、開源、跨平台的應用程式開發框架（Framework）。你可以用它來建立各式各樣的應用程式，包括網站、桌面應用、雲端服務等等。
+    .NET 8.0 是目前的長期支援版本 (LTS - Long-Term Support) ，代表它會獲得較長時間的官方更新與支援。
+    它繼承了過去 .NET Core 的優點，如高效能、可以在 Windows, macOS, Linux 上運行。
+
+* **MVC (Model-View-Controller / 模型-視圖-控制器)** :
+
+  * 這是一種軟體設計模式，特別常用於開發具有使用者介面的應用程式（尤其是Web應用）。
+  * 它的核心思想是關注點分離 (Separation of Concerns) ，將應用程式的不同職責劃分開來：
+    * **Model(模型)** : 代表應用程式的資料和業務邏輯。它負責處理資料的存取、驗證、儲存等。
+    * **View(視圖)** : 代表使用者介面 (UI) 。它負責將模型提供的資料呈現給使用者，通常在 Web開發中是指 HTML 頁面。
+    * **Controller(控制器)** : 作為模型和視圖之間的中介。它接收使用者的輸入（例如瀏覽器的請求），調度模型進行操作，然後選擇合適的視圖將結果回傳給使用者。
 
 ## 建立專案
 
-建立一個ASP.NET Core Web應用程式(Model-View-Controller)
+首先，我們需要建立一個 ASP.NET Core Web 應用程式專案。請選擇 **ASP.NET Core Web App (Model-View-Controller)** 範本。
+
 ![Alternative Text][1744532808599]
 
-架構選擇.NET 8.0
+在設定過程中，請確保選擇 **.NET 8.0** (或您目標的 .NET 版本) 作為目標框架。
 ![Alternative Text][1744532917711]
 
-下面是一個簡單的ASP.NET Core MVC專案資料夾架構，MVC對於每個檔案放置的位置與檔名有明確的規定，當然可以使用一些方法異動這些規定；但為了讓大家在維護專案時有相同的規則可以走，通常是依照預設的方式建立
+以下是一個典型的 ASP.NET Core MVC 專案資料夾結構。MVC 框架遵循 **「約定優於配置 (Convention over Configuration)」** 的原則，對檔案的放置位置與命名有預設的規範。雖然可以透過設定修改這些預設行為，但遵循標準約定能大幅提升專案的可維護性與團隊協作效率。因此，建議初學者遵循預設結構。
 
 ![Alternative Text][1744533346205]
 
+* `Controllers`: 存放處理使用者請求、調度模型的 Controller 類別。
+* `Models`: 存放應用程式的資料模型與業務邏輯。
+* `Views`: 存放使用者介面 (UI) 的 Razor 檔案 ( ***.cshtml*** )。
+  * `Shared`: 存放跨多個 View 共用的檔案，例如佈局頁 ( ***_Layout.cshtml*** )。
+* `wwwroot`: 存放靜態檔案，如 CSS、JavaScript、圖片等。
+* ***Program.cs*** : 應用程式的進入點，負責設定服務與中介軟體管線。
+
 ## 建立Controller、View
 
-MVC使用 ***{Controller}/{Action}/{id}*** 的方式表達這個網頁的用途  
-譬如說一個員工資料編輯的網頁
+ASP.NET Core MVC 採用基於 **路由 (Routing)** 的方式將 URL 映射到特定的 Controller Action。預設的路由範本通常是：
 
-* 員工清單的網址：http://{domain name}/***Employee***/***Index***
-* 新增員工的網址：http://{domain name}/***Employee***/***Create***
-* 編輯員工ID為3的網址：http://{domain name}/***Employee***/***Edit***/***3***
+`http://{domain name}/{Controller}/{Action}/{id?}`
 
-所以以 `員工清單的網址` 為例，假設要建立一個http://{domain name}/***Employee***/***Index***網址，建立流程如下：
+其中：
 
-1. 從網址中可以發現 ***{Controller}*** 是 ***Employee***，所以首先從 `Controllers` 這個資料夾按右鍵加入一個控制器，範本選擇 `MVC控制器 - 空白` ，命名對應 ***{Controller}*** 即 ***EmployeeController.cs***，內容程式碼如下：
+* **{Controller}** :對應 `Controllers` 資料夾下的 Controller 類別名稱 (去掉 *Controller* 後綴)。
+* **{Action}**: 對應 Controller 類別中的公開方法 (Action Method)。
+* **{id?}**: 可選的參數，通常用於傳遞資源識別符。
 
-    ```CSharp
+假設我們要建立建立員工資料管理功能的頁面，規劃會大致會如下：
+
+* 員工清單：`http://{domain name}/Employee/Index`
+* 新增員工：`http://{domain name}/Employee/Create`
+* 編輯 ID 為 3 的員工：`http://{domain name}/Employee/Edit/3`
+
+**範例：建立員工清單頁面(`/Employee/Index`)**
+
+1. **建立 Controller:**
+    * 從 URL `/Employee/Index` 可知，Controller 名稱為 **Employee**
+    * 在 `Controllers` 資料夾上按右鍵，選擇 **加入 (Add)** > **控制器 (Controller...)**
+    * 選擇 **MVC 控制器 - 空白 (MVC Controller - Empty)** 範本。
+    * 將控制器命名為 ***EmployeeController.cs*** (遵循 **{ControllerName}Controller** 的命名慣例)。
+    * 確保 Controller 繼承自 **Microsoft.AspNetCore.Mvc.Controller**。
+    * 加入對應 Action ( **Index** ) 的方法：
+
+    ```csharp
     using Microsoft.AspNetCore.Mvc;
 
-    namespace www.Controllers
+    namespace YourProjectName.Controllers // 請替換成您的專案命名空間
     {
-        /// <summary>Controller：Employee</summary>
+        /// <summary>
+        /// Employee Controller: 負責處理員工相關的請求。
+        /// </summary>
         public class EmployeeController : Controller
         {
-            /// <summary>Action：Index</summary>
+            /// <summary>
+            /// Index Action: 顯示員工清單頁面。
+            /// </summary>
+            /// <returns>包含員工清單的 View。</returns>
             public IActionResult Index()
             {
+                // return View(); 會尋找與 Action 同名的 View (Index.cshtml)
+                // 搜尋路徑預設為 /Views/Employee/Index.cshtml 或 /Views/Shared/Index.cshtml
                 return View();
             }
+
+            // 未來可加入 Create, Edit 等其他 Action 方法...
         }
     }
     ```
 
-2. 另外從網址中可以發現 ***{Action}*** 是 ***Index***，所以首先從 `Views` 下先建立對應 ***{Controller}*** 的資料夾，也就是在 `Views` 下建立 `Employee` 這個資料夾；接著在 `Employee` 這個資料夾按右鍵加入一個檢視，範本選擇 `Razor檢視 - 空白` ，命名對應 ***{Action}*** 即 ***Index.cshtml***，內容程式碼如下：
+2. **建立 View:**
 
-```html
-<h1>員工清單</h1>
-```
+    * 從 URL `/Employee/Index` 可知，Action 名稱為 **Index**。
+    * View 需要放置在與 Controller 對應的資料夾下。在 `Views` 資料夾下建立一個名為 `Employee` 的子資料夾。
+    * 在 `Views/Employee` 資料夾上按右鍵，選擇 **加入 (Add)** > **檢視 (View...)** 。
+    * 選擇 **Razor 檢視 - 空白 (Razor View - Empty)** 範本。
+    * 將檢視命名為 ***Index.cshtml*** (遵循 **{Action}.cshtml** 的命名慣例)。
+    * 加入 View 的內容：
 
-## 請求流程
+    ```html
+    @{
+        // 可在此處設定 View 的標題等資訊
+        ViewData["Title"] = "員工清單";
+    }
 
-所以當我們請求一個 http://{domain name}/***Employee***/***Index*** 網址，程式會這樣跑：
+    <h1>員工清單</h1>
 
-1.依網址解析 ***{Controller}*** 為 ***Employee*** ，所以會去執行 ***Controllers\EmployeeController.cs***
+    <!-- 後續可在此處加入顯示員工資料的 HTML 表格等 -->
+    ```
 
-2.依網址解析 ***{Action}*** 為 ***Index***，所以會在 ***Controllers\EmployeeController.cs*** 中尋找 `Index` 這個方法
+完成以上步驟後，執行專案並瀏覽至 `/Employee/Index`，即可看到「員工清單」頁面。
 
-3.`Index` 這個方法 `return View();` ，表示回傳一個在 `View` 資料夾下，對應 ***{Controller}*** 名字的資料下，與 `Index` 這個方法同名的 ***View***，也就是 ***View\Employee\Index.cshtml***
+## 請求處理流程
 
-4.載入 ***View\Employee\Index.cshtml***
+當使用者請求一個 URL (例如 `http://{domain name}/Employee/Index`) 時，ASP.NET Core MVC 應用程式會依照以下流程處理：
 
-5.載入 ***Views\_ViewImports.cshtml*** ，引入命名空間、Tag Helpers...等
-
-6.載入 ***Views\_ViewStart.cshtml*** ，設定預設佈局
-
-7.因為 ***Index.cshtml***中並未指定布局，所以依照 ***Views\_ViewStart.cshtml*** 的設定 `@{ Layout = "_Layout";}` 載入 ***Views\Shared\_Layout.cshtml*** 作為布局
-
-8.***_Layout.cshtml*** 會將 ***Index.cshtml*** 的HTML內容放入程式碼中 `@RenderBody()`的位置
-
-9.合併View與佈局並回傳
-
-流程圖如下：
+1. **接收請求** ： 瀏覽器或客戶端發出 HTTP 請求。
+2. **中介軟體管線** ： 請求進入 ASP.NET Core 的中介軟體管線 ( ***Program.cs*** 中設定)。
+3. **路由系統** ： 路由中介軟體根據設定的路由規則，解析 URL `/Employee/Index` ，找出匹配的 Controller `EmployeeController` 與 Action `Index` 。
+4. **執行 Action**:
+    * 框架實例化 `EmployeeController`。
+    * 執行 `Index()` Action 方法。
+5. **執行 `return View()`**:
+    * Action 方法回傳 `ViewResult` 。
+    * 框架開始尋找對應的 View 檔案。預設搜尋路徑為： ***/Views/{ControllerName}/{ActionName}.cshtml*** (即 ***/Views/Employee/Index.cshtml*** )
+6. **載入** ***_ViewImports.cshtml*** ： 框架會載入位於 `Views` 資料夾根目錄的 ***_ViewImports.cshtml*** 檔案。此檔案通常用於引入共用的命名空間(@using)和Tag Helpers(@addTagHelper`)。
+7. **載入** ***_ViewStart.cshtml*** ： 框架接著載入 `Views` 資料夾下的 ***_ViewStart.cshtml*** 。此檔案用於設定所有 (或特定資料夾下) View 的預設屬性，最常見的是設定預設的佈局頁面(**Layout**)。
+8. **載入佈局頁** ***_Layout.cshtml***:
+    * 由於 ***Index.cshtml*** 未指定佈局頁，且 ***_ViewStart.cshtml*** 通常會設定 `@{ Layout = "_Layout"; }`。
+    * 框架會載入 ***Views/Shared/_Layout.cshtml*** (或指定的佈局頁)。
+9. **渲染 View**:
+    * ***_Layout.cshtml*** 通常包含 HTML 的骨架結構 (如 `<html>`, `<head>`, `<body>`)。
+    * ***_Layout.cshtml** 中會呼叫 `@RenderBody()` 方法，這個位置會被實際的 View (`Index.cshtml`) 內容所取代。
+10. **合併與回傳**: 框架將 View ( ***Index.cshtml*** ) 的內容與佈局頁 ( ***_Layout.cshtml*** ) 合併，產生最終的 HTML。
+11. **發送回應**: 將產生的 HTML 作為 HTTP 回應傳送回瀏覽器。
+**流程示意圖：**
 
 ```mermaid
 graph TD
-    A("瀏覽器發出請求")-->B("<b>Program.cs</b>\n建立WebApplication...等")
-    B-->C("找到匹配的路由")
-    C-->D("<b>{Controller}Controller.cs</b>執行Action方法")
-    D-->E["尋找並載入<b>Views\{Controller}\{Action}.cshtml</b>"]
-    E-->F["載入<b>Views\_ViewImports.cshtml</b>(引入命名空間、Tag Helpers...等)"]
-    F-->G["載入<b>Views\_ViewStart.cshtml</b>(設定預設佈局)"]
-    G-->H["載入<b>Views\Shared\_Layout.cshtml</b>(頁面整體結構局)"]
-    H-->I["合併視圖與佈局"]
-    I-->M["產生畫面"]--"重新發出請求"-->C
+    A["瀏覽器發出請求<br>(如：/Employee/Index)"]-->B("<b>Program.cs / 中介軟體管線</b><br>處理請求、執行路由")
+    B-->C("<b>路由系統</b><br>解析 URL<br>匹配 Controller: Employee<br>匹配 Action: Index")
+    C-->D("<b>EmployeeController.cs</b><br>實例化 Controller<br>執行 Index() Action 方法")
+    D -- "return View()" --> E("<b>View Discovery</b><br>尋找 View 檔案 /Views/Employee/Index.cshtml")
+    E-->F("載入 <b>/Views/_ViewImports.cshtml</b><br>引入命名空間、Tag Helpers...")
+    F-->G("載入 <b>/Views/_ViewStart.cshtml</b><br>設定預設 Layout = "_Layout"")
+    G-->H("載入 <b>/Views/Shared/_Layout.cshtml</b><br>頁面整體結構、包含 @RenderBody()")
+    H-->I("<b>渲染引擎</b><br>合併 Index.cshtml 與 _Layout.cshtml")
+    I-->J("產生最終 HTML 回應")
+    J-->K["瀏覽器接收並顯示頁面"]
+    
+    subgraph "View Rendering Process"
+            E
+            F
+            G
+            H
+            I
+        end
 ```
 
 ## 補充說明
 
-* 如果希望 ***{Action}*** 回傳指定的Controller與Action(譬如網址是Employee/Index，但是希望回傳Home/Create的內容)，只要將 `return View();` 改為 `return RedirectToAction("Create", "Home");` 即可。
+* **重新導向(Redirect)** ： 如果希望 Action 不渲染 View ，而是將使用者導向到另一個 Action ，可以使用 RedirectToAction() 。例如，在某個操作完成後跳轉回清單頁：
 
-* 如果希望使用指定的布局，可於 `Views\Shared` 資料夾下建立自訂的布局(如：_MyLayout.cshtml)，並於View中指定Layout名稱，不過注意Layout建議維持第一碼為底線的命名方式。
-
-  ```CSharop
-  @{
-      Layout = "_MyLayout";
-  }
-  
-  <h1>員工清單</h1>
+  ```CSharp
+  return RedirectToAction("Create", "Home"); //導向到Home Controller的Create Action
   ```
 
-* Model的部分之後會提到...
+* **指定不同的View** ： 如果 Action 要渲染一個與 Action 名稱不同的 View ，可以在 View() 中指定名稱：
 
+  ```CSharp
+  return View("MyCustomView"); // 會尋找/Views/Employee/MyCustomView.cshtml
+  ```
+
+* **指定不同的 Layout**
+
+  若要讓單個 View 使用不同於 ***_ViewStart.cshtml*** 設定的佈局，可以在該 ***.cshtml** 檔案開頭指定
+  
+  ```CSharp
+  @{
+      Layout = "_MyCustomLayout"; // 指定使用 /Views/Shared/_MyCustomLayout.cshtml
+  }
+
+  <h1>員工清單 (使用自訂佈局)</h1>
+  ```
+
+  注意：佈局檔案通常放置在 Views/Shared 資料夾，並建議以底線 (_) 開頭命名，表示它們不是直接被請求的 View。
 
 [1744532808599]:data:image/png;base64,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
 
