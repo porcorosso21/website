@@ -8,7 +8,7 @@
   * [BarCode / QRCode](/CSharp/BarcodeQRCode.md)
   * [Dll參考](/CSharp/AssemblyLoadDll)
   * [模擬執行身分](/CSharp/UserImpersonation.md)
-* [.NET Core 8](#)
+* [.NET Core 8 MVC](#)
   * [ASP.NET Core 8.0 MVC 基礎](/Core8MVC/MVC.md)
   * [Web Compiler SCSS編譯](/Core8MVC/WebCompiler.md)
 * [.NET Core 8 RESTful API](/API/dotNetCore8RESTfulAPI.md)
