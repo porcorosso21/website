@@ -1,12 +1,18 @@
 # WCF系統開發範例
 
+建立一個簡單的 WCF (Windows Communication Foundation) 系統的開發，包含建立 WCF 服務和用戶端應用程式。
+
 ## 建立WCF服務應用程式
 
-1. 建立一個 **WCF服務應用程式** 專案
+1. **建立 WCF 服務應用程式專案**
+
+    * 在 Visual Studio 中，選擇建立一個 **WCF 服務應用程式 (.NET Framework)** 專案。
 
     ![Alternative Text][1743063338746]
 
-2. 修改`IService1.cs`內容，僅留下**GetData()**
+2. **簡化** ***IService1.cs***
+
+    * 開啟 ***IService1.cs*** 檔案，將介面簡化，僅保留 `GetData()` 方法。
 
     ```csharp
     using System.ServiceModel;
@@ -22,7 +28,9 @@
     }
     ```
 
-3. 修改`Service1.svc`內容，一樣僅留下**GetData()**
+3. **簡化** ***Service1.svc.cs***
+
+    * 開啟 ***Service1.svc.cs*** 檔案，將類別簡化，僅保留 `GetData()` 方法的實作。
 
     ```csharp
     namespace WcfService1
@@ -37,70 +45,112 @@
     }
     ```
 
-## 新增IIS應用程式
+## 在 IIS 中新增應用程式
 
-1. 於IIS下新增一個應用程式
+1. **新增 IIS 應用程式**
+
+    開啟 IIS 管理員，在網站節點下，新增一個應用程式。
 
     ![Alternative Text][1743063994458]
 
-2. 設定號好`別名`，及`實體路徑`
+2. **設定應用程式屬性**
+
+    * 設定應用程式的 `別名` 和 `實體路徑`，確保實體路徑指向 WCF 服務應用程式專案的發佈目錄 (例如 bin\Release)。
 
     ![Alternative Text][1743064086170]
 
 ## 產生用戶端類別
 
-1. 在IIS下按 ***.80(http)*** ，再點`Service1.svc`
+1. **瀏覽** ***Service1.svc***
+
+    * 在 IIS 管理員中，按下`瀏覽*.80(http)`瀏覽到您的 WCF 服務應用程式，然後點選 ***Service1.svc*** 檔案。
 
     ![Alternative Text][1743067386188]
 
-    便可看到下列畫面，這邊說明了如何使用svcutil.exe工具來建立連線的class，以及Client端的連線程式碼範例
+    * 應該會看到一個頁面，其中包含有關如何使用 svcutil.exe 工具建立連線類別的資訊，以及用戶端連線程式碼範例。
 
     ![Alternative Text][1743067347473]
 
-2. 使用svcutil.exe工具來建立連線的class
+2. **使用 svcutil.exe 工具**
 
-    執行`命令提示字元`，移至**svcutil.exe**所在的資料夾；執行 **svcutil.exe http://{IP}/{IIS所設的別名}/{svc檔名}?wsdl /directory:{輸出的目錄}**  
+    * 開啟命令提示字元。
+    * 導航到 svcutil.exe 所在的資料夾。 svcutil.exe 的位置取決於您安裝的 .NET Framework 版本：
+        * .NET Framework 3.5：  
+            `C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin`
+        * .NET Framework 4.x：  
+            `C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools`
+    * 執行以下命令，以產生用戶端類別：
 
-    * .Net 3.5版本(本執行階段版本:2.0.50727.9174) svcutil.exe在C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin下
-    * .Net 4.0版本(本執行階段版本:4.0.30319) svcutil.exe在C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools下。
+        ```batch
+        svcutil.exe http://localhost/WcfService/Service1.svc?wsdl /directory:D:\
+        ```
 
-    ```batch
-    svcutil.exe http://localhost/WcfService/Service1.svc?wsdl /directory:D:\
-    ```  
+        * 替換 `http://localhost/WcfService/Service1.svc` 為您的 WCF 服務的實際 URL。
+        * 替換 ***Service1Client.cs*** 為您希望產生的程式碼檔案名稱。
+        * 執行完成後，會在指定目錄下產生 ***Service1Client.cs*** 檔案。
 
-    此時會在指定的目錄下產生`Service1.cs`
+## 建立用戶端應用程式
 
-## 建立Client
+1. **建立 Windows Forms 應用程式專案**
 
-1. 建立一個 **Windows Froms App (.NET Framework)** 專案作為Client
+    * 在 Visual Studio 中，建立一個 `Windows Forms 應用程式 (.NET Framework)` 專案。
 
-2. 編輯`App.config`，在 **configuration** 節點內增加 **system.serviceModel** 節點，**address** 為 **http://{IP}/{IIS所設的別名}/{svc檔名}**
+2. **編輯** ***App.config***
 
-    ```xml
-    <configuration>
-        <system.serviceModel>
-            <client>
-                <endpoint address="http://localhost/WcfService/Service1.svc"
-                        binding="basicHttpBinding"
-                        contract="IService1"
-                        name="Service1Endpoint" />
-            </client>
-        </system.serviceModel>
-        <startup> 
-            <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.5" />
-        </startup>
-    </configuration>
-    ```
+    * 開啟 ***App.config*** 檔案，在 `<configuration>` 節點內，新增 `<system.serviceModel>` 節點，並配置用戶端端點。
 
-3. 於專案上選擇 **加入現有項目** ，選剛剛產生的`Service1.cs`，且在 **Fome** 中建立一個 **button**，並綁訂一個 **Click** 事件，內容如下：
+        ```xml
+        <?xml version="1.0" encoding="utf-8" ?>
+        <configuration>
+            <system.serviceModel>
+                <client>
+                    <endpoint address="http://localhost/WcfService/Service1.svc"
+                            binding="basicHttpBinding"
+                            contract="WcfService1.IService1"
+                            name="Service1Endpoint" />
+                </client>
+            </system.serviceModel>
+            <startup>
+                <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.8" />  <!-- 根據您的目標 .NET Framework 版本調整 -->
+            </startup>
+        </configuration>
+        ```
 
-    ```csharp
-    Service1Client client = new Service1Client();
-    string str = client.GetData(123);
-    Console.WriteLine(str);
-    ```
+        * 替換 `http://localhost/WcfService/Service1.svc` 為您的 WCF 服務的實際 URL。
+        * 確保 `contract` 屬性與 `IService1` 介面的完整名稱（包含命名空間）相符。
+        * 根據專案目標框架調整 `supportedRuntime` 的 `sku` 屬性。
 
-    這樣就建立好一個WCF Client的程式了
+3. **新增現有項目**
+
+    * 在用戶端專案中，選擇 加入現有項目，並選取剛剛使用 `svcutil.exe` 產生的 ***Service1Client.cs*** 檔案。
+
+4. 撰寫用戶端程式碼
+
+    * 在 `Form1` 中，建立一個 `Button` 控制項，並為其 `Click` 事件新增以下程式碼：
+
+        ```csharp
+        using WcfService1; // 確保包含 WCF 服務的命名空間
+
+        namespace WCFClient // 替換為您的命名空間
+        {
+            public partial class Form1 : Form
+            {
+                public Form1()
+                {
+                    InitializeComponent();
+                }
+
+                private void button1_Click(object sender, EventArgs e)
+                {
+                    Service1Client client = new Service1Client();
+                    string result = client.GetData(123);
+                    MessageBox.Show(result); // 使用 MessageBox 顯示結果
+                }
+            }
+        }
+        ```
+
+        這樣就成功建立了一個簡單的 WCF 服務和用戶端應用程式。 執行用戶端應用程式，點擊按鈕，將會呼叫 WCF 服務，並顯示服務傳回的結果。
 
 [1743063338746]:data:image/png;base64,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
 
