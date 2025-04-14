@@ -6,7 +6,7 @@
   * [資料庫連線](/CSharp/Database.md)
   * [RDLC直接列印](/CSharp/PrintRDLC.md)
   * [BarCode / QRCode](/CSharp/BarcodeQRCode.md)
-  * [Dll參考](/CSharp/AssemblyLoadDll)
+  * [DLL 參考管理](/CSharp/AssemblyLoadDll)
   * [模擬執行身分](/CSharp/UserImpersonation.md)
 * [.NET Core 8 MVC](#)
   * [ASP.NET Core 8.0 MVC 基礎](/Core8MVC/MVC.md)

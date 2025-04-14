@@ -1,18 +1,32 @@
-# Dll參考
+# DLL 參考管理
 
-## 將Dll放入Resources中
+在 .NET 開發中，有效地管理 DLL 參考對於保持專案的整潔、減少部署大小以及避免版本衝突至關重要。 本文將介紹兩種常見的 DLL 參考管理方式：將 DLL 嵌入資源和將 DLL 放置在指定資料夾中。 我們將以 ***Newtonsoft.Json.dll*** 作為範例進行說明。
 
-為了讓輸出的檔案清單簡單乾淨，或是不想讓User知道引用那些dll，可以將dll放入Resources內，需要時再從Resources直接使用；下面將使用Newtonsoft.Json.dll作範例。
+## 方式一：將 DLL 嵌入資源
 
-1. 將dll加入資源中，但設定Resources內的dll屬性`建置動作`選為**內嵌資源**，`複製到輸出目錄`選為**不要複製**
+適用於希望隱藏專案所依賴的 DLL，或簡化輸出目錄結構的情況。
 
-    ![Alternative Text][1743050216960]
+1. **新增 DLL 至資源檔**
 
-2. 將dll加入參考供開發時使用，屬性`複製到本機`選為**False**
+    * 將 ***Newtonsoft.Json.dll*** 檔案新增至專案的資源中。
+    * 在資源檔中，設定 DLL 的屬性：
+        * `建置動作` (Build Action)：**內嵌資源**
+        * `複製到輸出目錄` (Copy to Output Directory)：**不要複製**
 
-    ![Alternative Text][1743050901384]
+        ![Alternative Text][1743050216960]
 
-3. 在`Program.cs`中綁定**AssemblyResolve**事件，即可在找不到dll的情況下，自動從資源中載入。
+2. **新增 DLL 參考 (供開發時使用)**
+
+    * 在專案中新增 ***Newtonsoft.Json.dll*** 的參考。
+    * 設定該參考的屬性：
+        * `複製到本機` (Copy Local)：**False**
+
+        ![Alternative Text][1743050901384]
+
+3. **處理 AssemblyResolve 事件**
+
+    * 在應用程式的進入點（***Program.cs*** 的 `Main` 方法）中，訂閱 `AppDomain.CurrentDomain.AssemblyResolve` 事件。
+    * 在事件處理常式中，實作載入資源中 DLL 的邏輯。
 
     ```csharp
     static void Main()
@@ -46,23 +60,46 @@
     }
     ```
 
-## 將Dll放入指定資料夾內
+    * **說明**
 
-參考的dll過多，會讓輸出的exe旁跟了一大堆dll，為了讓輸出的結構乾淨，可以將dll統一放入某個資料夾中，需要時從該資料夾中尋找並使用，一樣以Newtonsoft.Json.dll作範例。
+        * AssemblyResolve 事件： 當 Common Language Runtime (CLR) 無法找到參考的 DLL 時，會觸發此事件。 通過訂閱此事件，您可以提供自訂的 DLL 載入邏輯。
 
-1. 在方案中建立`dlls`資料夾，將**Newtonsoft.Json.dll**放入
+        * 資源名稱： 資源名稱的格式為 [命名空間].[資料夾]. [DLL 檔案名稱]。 請根據您的專案結構調整資源名稱。
+
+## 方式二：將 DLL 放置在指定資料夾中
+
+適用於需要組織輸出目錄結構的情況，將所有 DLL 放在一個特定的資料夾中，使主執行檔目錄保持整潔。
+
+1. **建立 DLL 資料夾**
+
+    在方案中建立一個名為 dlls (或其他您喜歡的名稱) 的資料夾，將 ***Newtonsoft.Json.dll*** 複製到此資料夾中
 
     ![Alternative Text][1743051578122]
 
-2. 屬性`複製到輸出目錄`選擇**一律複製**
+2. **設定 DLL 檔案屬性**
 
-    ![Alternative Text][1743051676216]
+    * 在專案中，選取 dlls 資料夾中的 ***Newtonsoft.Json.dll*** 檔案。
 
-3. 將dll加入參考供開發時使用，屬性`複製到本機`選為**False**
+    * 設定檔案屬性：
 
-    ![Alternative Text][1743050901384]
+        * `複製到輸出目錄` (Copy to Output Directory)：一律複製
 
-4. 在`Program.cs`中綁定**AssemblyResolve**事件，即可在找不到dll的情況下，從指定的路徑載入。
+        ![Alternative Text][1743051676216]
+
+3. **新增 DLL 參考 (供開發時使用)**
+
+    * 在專案中新增 ***Newtonsoft.Json.dll*** 的參考 (從 dlls 資料夾中選擇)。
+
+    * 設定該參考的屬性：
+
+        * `複製到本機` (Copy Local)：False
+
+        ![Alternative Text][1743050901384]
+
+4. **處理 AssemblyResolve 事件**
+
+    * 在應用程式的進入點（ ***Program.cs*** 的 `Main` 方法）中，訂閱 `AppDomain.CurrentDomain.AssemblyResolve` 事件。
+    * 在事件處理常式中，實作從指定資料夾載入 DLL 的邏輯。
 
     ```csharp
     static void Main()
@@ -89,6 +126,12 @@
         Application.Run(new Form1());
     }
     ```
+
+    * **說明**
+
+        * **Assembly.LoadFrom**： 此方法從指定的路徑載入 DLL。 請確保路徑正確指向 DLL 檔案。
+
+        * **UnsafeLoadFrom**  `Assembly.UnsafeLoadFrom` 允許載入來自網路共享資料夾的 DLL，但存在安全風險，不建議使用，除非您完全了解其含義。 `Assembly.LoadFrom` 是更安全的選擇，特別是當 DLL 位於本地時。
 
 [1743050216960]:data:image/png;base64,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
 
