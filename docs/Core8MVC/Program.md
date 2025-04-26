@@ -4,7 +4,8 @@
 
 ```csharp
 using Microsoft.EntityFrameworkCore;
-using webapp1.Models; //應用程式Model的命名空間
+using webapp1.SqlServerDBModels; // 應用程式SqlServer Model的命名空間
+using webapp1.MariaDBModels; // 應用程式Maria Model的命名空間
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,16 +26,27 @@ if (!builder.Environment.IsDevelopment())
     });
 }
 
-// 設定資料庫連線字串 (使用 MySQL)
-// 將 DBContext 註冊為服務，並配置使用 MySQL 資料庫。
-builder.Services.AddDbContext<DBContext>(
-    options => options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
-    new MySqlServerVersion(new Version(10, 11, 9)) //版本
+// 設定資料庫連線字串 (使用 SqlServer DB)
+builder.Services.AddDbContext<SqlServerDBContext>(
+    options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlserverConnection")
 ));
-// 在appsettings.json中設置對應的DefaultConnection
+// 在appsettings.json中設置對應的SqlserverConnection
 // {
 //   "ConnectionStrings": {
-//         "DefaultConnection": "Server=localhost;Database=db;Uid=user;Pwd=password;"
+//         "SqlserverConnection": "Data Source=localhost;Initial Catalog=db;User ID=user;Password=password;Encrypt=False;"
+//   }
+// }
+
+// 設定資料庫連線字串 (使用 MariaDB)
+// 將 DBContext 註冊為服務，並配置使用 MariaDB 資料庫。
+builder.Services.AddDbContext<MariaDBContext>(
+    options => options.UseMySql(builder.Configuration.GetConnectionString("MariaDBConnection"),
+    new MySqlServerVersion(new Version(10, 11, 9)) //版本
+));
+// 在appsettings.json中設置對應的MariaDBConnection
+// {
+//   "ConnectionStrings": {
+//         "MariaDBConnection": "Server=localhost;Database=db;Uid=user;Pwd=password;"
 //   }
 // }
 
