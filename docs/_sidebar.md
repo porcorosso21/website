@@ -1,5 +1,6 @@
 * [.NET Core 8 MVC](#)
   * [ASP.NET Core 8.0 MVC 基礎](/Core8MVC/MVC.md)
+  * [Program.cs 設定範例及說明](/Core8MVC/Program.md)
   * [Web Compiler SCSS編譯](/Core8MVC/WebCompiler.md)
 * [API](#)
   * [.NET Core 8 RESTful API](/API/dotNetCore8RESTfulAPI.md)
