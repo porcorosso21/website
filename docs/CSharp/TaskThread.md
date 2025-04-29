@@ -1,113 +1,63 @@
-# Task、Thread
+# Task 與 Thread
+
+在 C# 中，`Task` 和 `Thread` 都可用於執行並行操作，提升應用程式的效能和回應性。然而，它們在使用方式和提供的功能上有所不同。
 
 ## Task
 
-```csharp
-private async void buttonGo_Click(object sender, EventArgs e)
-{
-    //進度條初始化
-    progressBar1.Maximum = 10;
-    progressBar1.Value = 0;
+`Task` 是基於 **任務並行庫 (Task Parallel Library, TPL)** 的抽象，更易於使用和管理非同步操作。它通常與 `async` 和 `await` 關鍵字結合使用，實現非阻塞式的等待。
 
-    //非同步執行
-    Console.WriteLine("非同步執行開始");
+**關鍵特性：**
+
+* **非阻塞式等待：** 使用 `await` 關鍵字可以讓程式在等待 `Task` 完成時不會凍結 UI 執行緒或其他重要的執行緒。
+* **async/await 關鍵字：** `async` 標記方法為非同步方法，`await` 用於等待非同步操作完成。
+* **更高級的抽象：** 相較於 `Thread`，`Task` 提供了更多內建的功能，如取消、延續、以及更方便的結果處理。
+
+執行一個 `Task` ： 執行後顯示 **Task Done**
+
+```csharp
+private async void button_Click(object sender, EventArgs e)
+{
     await Task.Run(() =>
     {
-        while (true)
-        {
+        Console.WriteLine("Task started");
 
-            //模擬耗時工作
-            System.Threading.Thread.Sleep(1000);
-
-            //進度條更新
-            this.Invoke(new Action(() => //使用Invoke來更新UI
-            {
-                progressBar1.PerformStep();
-            }));
-
-            //進度條完成
-            if (progressBar1.Value == progressBar1.Maximum)
-            {
-                Console.WriteLine("非同步執行結束");
-                break;
-            }
-        }
+        Thread.Sleep(1000);
     });
+
+    Console.WriteLine("Task Done");
 }
 ```
 
-## 同時執行兩個Task
+同時執行兩個 `Task` ： `t1` 與 `t2` 同時執行，而不是 `t2` 不會等 `t1` 執行好才執行；皆執行好了後顯示 **Task Done**
 
 ```csharp
-private async void buttonGo_Click(object sender, EventArgs e)
+private async void button_Click(object sender, EventArgs e)
 {
-    //進度條初始化
-    progressBar1.Maximum = 10;
-    progressBar1.Value = 0;
-    progressBar2.Maximum = 10;
-    progressBar2.Value = 0;
-
-    //非同步執行
-    Console.WriteLine("非同步執行開始");
-
     //Task1
     Task t1 = Task.Run(() =>
     {
-        Console.WriteLine("Task1開始");
-        while (true)
-        {
+        Console.WriteLine("Task1 started");
 
-            //模擬耗時工作
-            System.Threading.Thread.Sleep(1000);
-
-            //進度條更新
-            this.Invoke(new Action(() => //使用Invoke來更新UI
-            {
-                progressBar1.PerformStep();
-            }));
-
-            //進度條完成
-            if (progressBar1.Value == progressBar1.Maximum)
-            {
-                Console.WriteLine("Task1結束");
-                break;
-            }
-        }
+        System.Threading.Thread.Sleep(1000);
     });
+
     //Task2
     Task t2 = Task.Run(() =>
     {
-        Console.WriteLine("Task2開始");
-        while (true)
-        {
+        Console.WriteLine("Task2 started");
 
-            //模擬耗時工作
-            System.Threading.Thread.Sleep(500);
-
-            //進度條更新
-            this.Invoke(new Action(() => //使用Invoke來更新UI
-            {
-                progressBar2.PerformStep();
-            }));
-
-            //進度條完成
-            if (progressBar2.Value == progressBar2.Maximum)
-            {
-                Console.WriteLine("Task2結束");
-                break;
-            }
-        }
+        System.Threading.Thread.Sleep(5000);
     });
 
-    await Task.Run(() => 
-        Task.WaitAll(t1, t2)
-    );
+    await Task.Run(() => {
+        Task.WaitAll(t1, t2);
+    });
 
-    Console.WriteLine("非同步執行結束");
+    Console.WriteLine("Task Done");
 }
 ```
 
-## 利用CancellationTokenSource取消Task
+利用 **CancellationTokenSource** 取消 `Task` ： 取消後要執行的方法，可以寫在 `cts.Cancel();` 後面，或是寫在 `catch (TaskCanceledException){}`內
 
 ```csharp
 /// <summary>Task</summary>
@@ -116,144 +66,192 @@ Task t;
 /// <summary>CancellationTokenSource</summary>
 CancellationTokenSource cts;
 
-private async void buttonGo_Click(object sender, EventArgs e)
+private async void button1_Click(object sender, EventArgs e)
 {
     if (t != null && !t.IsCompleted) //Task已初始化且Task尚未完成
     {
         cts.Cancel();
+
     }
     else
     {
-        //進度條初始化
-        progressBar1.Maximum = 10;
-        progressBar1.Value = 0;
-
-        //非同步執行
-        Console.WriteLine("非同步執行開始");
-
         cts = new CancellationTokenSource();
 
         t = Task.Run(() =>
         {
             try
             {
-                Console.WriteLine("Task開始");
-
-                while (true)
+                for (int i = 0; i < 100; i++)
                 {
-                    cts.Token.ThrowIfCancellationRequested();
-
-                    //模擬耗時工作
-                    System.Threading.Thread.Sleep(500);
-
-                    //進度條更新
-                    this.Invoke(new Action(() => //使用Invoke來更新UI
+                    if (cts.Token.IsCancellationRequested)
                     {
-                        progressBar1.PerformStep();
-                    }));
-
-                    //進度條完成
-                    if (progressBar1.Value == progressBar1.Maximum)
-                    {
-                        Console.WriteLine("Task結束");
+                        Console.WriteLine("Task cancelled");
                         break;
                     }
+
+                    Console.WriteLine("Task running: " + i);
+
+                    Thread.Sleep(1000);
                 }
             }
-            catch (OperationCanceledException)
+            catch (TaskCanceledException)
             {
-                Console.WriteLine("Task取消");
+                Console.WriteLine("Task Cancel");
             }
-            catch (Exception ex)
+            finally
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("Task finish");
             }
-        });
+        }, cts.Token);
 
-        await Task.Run(() => {
-            t.Wait();
-        });
-
-        Console.WriteLine("非同步執行結束");
+        await t; // /等待 t 執行完畢
     }
 }
 ```
 
 ## Thread
 
+`Thread` 代表一個底層的作業系統執行緒。直接操作 `Thread` 相對較為複雜，且容易產生資源管理和同步問題。在現代 C# 開發中，通常建議使用 `Task` 來進行並行操作。
+
+**關鍵特性：**
+
+* **直接操作作業系統執行緒：** 提供了對執行緒的更底層控制。
+* **阻塞式等待：** 使用 `Join()` 方法會導致呼叫執行緒阻塞，直到被等待的執行緒完成。
+
+執行一個 `Thread` ： 執行後顯示 **Task Done** 。 這邊注意到 **button Click Finish** 是立即顯示，而不是等到 `t1` 結束後才顯示，
+ 
+```csharp
+private void button_Click(object sender, EventArgs e)
+{
+    Console.WriteLine("button Click Strat");
+
+    Thread t1 = new Thread(ThreadMethod);
+    t1.Start();
+
+    Console.WriteLine("button Click Finish");
+}
+
+
+static void ThreadMethod()
+{
+    Console.WriteLine("Thread Start");
+
+    Thread.Sleep(3000);
+
+    Console.WriteLine("Thread Done");
+}
+```
+
+執行兩個 `Thread` ： 注意這邊是建立一個 `t` 來處理 `t1` 與 `t2` 的同時執行與互相等待，如果把 **MainThreadMethod** 內的程式碼拉到 `button_Click` 內執行，會造成UI執行續卡死
+
+```csharp
+private void button_Click(object sender, EventArgs e)
+{
+    Console.WriteLine("button Click Strat");
+
+    Thread t = new Thread(() => {
+        MainThreadMethod("Apple");
+    } );
+    t.Start();
+
+    Console.WriteLine("button Click Finish");
+}
+
+static void MainThreadMethod(String param)
+{
+    Console.WriteLine("Param Is " + param);
+
+    Console.WriteLine("All Thread Start");
+
+    Thread t1 = new Thread(ThreadMethod1);
+    Thread t2 = new Thread(ThreadMethod2);
+    t1.Start();
+    t2.Start();
+
+    Console.WriteLine("WAIT Thread Finish");
+    t1.Join();
+    t2.Join();
+
+    Console.WriteLine("All Thread Done");
+}
+
+
+static void ThreadMethod1()
+{
+    Console.WriteLine("Thread 1 Start");
+
+    Thread.Sleep(1000);
+
+    Console.WriteLine("Thread 1 Done");
+}
+
+static void ThreadMethod2()
+{
+    Console.WriteLine("Thread 2 Start");
+
+    Thread.Sleep(3000);
+
+    Console.WriteLine("Thread 2 Done");
+}
+
+```
+
+利用 **Abort** 取消 `Thread` ： 取消後要執行的方法，可以寫在 `t.Abort();` 後面，或是寫在 `catch (ThreadAbortException){}`內
+
 ```csharp
 /// <summary>Thread</summary>
-Thread t;
+private Thread t;
 
-private void buttonGO_Click(object sender, EventArgs e)
+private void button1_Click(object sender, EventArgs e)
 {
-    if (t != null && t.ThreadState != ThreadState.Aborted && t.ThreadState != ThreadState.Stopped) //啟動中，中止
+    if (t != null && t.IsAlive)
     {
-        //中止程序
         t.Abort();
-
-        //處理完畢後的程序
-        ProcessDone();
-    }
-    else //未啟用，啟動程序
-    {
-        //進度條初始化
-        progressBar1.Maximum = 10;
-        progressBar1.Value = 0;
-        progressBar1.Step = 1;
-
-        //啟動程序
-        Console.WriteLine("程序開始");
-        t = new Thread(() => { Process(); });
-        t.Start();
-    }
-}
-
-/// <summary>
-/// 
-/// </summary>
-private void Process()
-{
-    while (true)
-    {
-        //模擬處理時間
-        Thread.Sleep(1000);
-
-        //異動進度條
-        this.Invoke(new Action(() => //跨執行緒操作UI
-        {
-            progressBar1.PerformStep();
-        }));
-
-        if (progressBar1.Value == progressBar1.Maximum) { break; }
-    }
-
-    //處理完畢後的程序
-    ProcessDone();
-}
-
-/// <summary>
-/// 處理完畢後的程序
-/// </summary>
-private void ProcessDone()
-{
-    if (this.InvokeRequired)
-    {
-        this.Invoke(new Action(() => //跨執行緒操作UI
-        {
-            ProcessDone();
-        }));
     }
     else
     {
-        if (t.ThreadState == ThreadState.Aborted) //中止
-        {
-            Console.WriteLine("程序中止");
-        }
-        else //完成   
-        {
-            Console.WriteLine("程序完成");
-        }
+        Console.WriteLine("button Click Strat");
+
+        t = new Thread(ThreadMethod);
+        t.Start();
+
+        Console.WriteLine("button Click Finish");
     }
 }
+
+static void ThreadMethod()
+{
+    try
+    {
+        Console.WriteLine("Thread Start");
+
+        Thread.Sleep(5000);
+
+        Console.WriteLine("Thread Done");
+    }
+    catch (ThreadAbortException)
+    {
+        Console.WriteLine("Thread Abort");
+    }
+    finally
+    {
+        ThreadDoneMethod();
+    }
+}
+
+static void ThreadDoneMethod()
+{
+    Console.WriteLine("Thread Finish");
+}
+```
+
+## Invoke
+
+當在非 UI 執行緒中執行的程式碼需要更新 UI 元素時，會因為跨執行緒存取而導致錯誤。這是因為 UI 元素只能由創建它們的執行緒（通常是主 UI 執行緒）進行修改。 `Control.Invoke()` 方法提供了一種安全地將委派封送回 UI 執行緒執行的方式。
+
+```csharp
+this.Invoke(new Action(() => //使用Invoke來更新UI
+{
+    progressBar1.PerformStep(); //進度條更新
+}));
 ```
