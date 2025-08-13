@@ -83,18 +83,14 @@ private async void button1_Click(object sender, EventArgs e)
             {
                 for (int i = 0; i < 100; i++)
                 {
-                    if (cts.Token.IsCancellationRequested)
-                    {
-                        Console.WriteLine("Task cancelled");
-                        break;
-                    }
+                    cts.Token.ThrowIfCancellationRequested();
 
                     Console.WriteLine("Task running: " + i);
 
                     Thread.Sleep(1000);
                 }
             }
-            catch (TaskCanceledException)
+            catch (OperationCanceledException)
             {
                 Console.WriteLine("Task Cancel");
             }
