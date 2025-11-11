@@ -3,6 +3,8 @@
   * [Program.cs 設定範例及說明](/Core8MVC/Program.md)
   * [VS2022 SCSS編譯](/Core8MVC/WebCompiler.md)
   * [VS2022 TypeScript編譯](/Core8MVC/TSMSBuild.md)
+* [.NET Core 8 API](#)
+  * [Swagger](/Core8API/Swagger.md)
 * [API](#)
   * [.NET Core 8 RESTful API](/API/dotNetCore8RESTfulAPI.md)
   * [JSON Web Token (JWT)](/API/JWT.md)
